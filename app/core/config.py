@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     debug: bool = False
     stage: str = "dev"
     port: int = 8081
-    api_key: str = ""
+    api_key: str = "test-api-key"
 
     outbox_worker_interval_seconds: int = 1
 

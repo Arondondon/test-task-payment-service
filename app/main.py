@@ -4,7 +4,7 @@ from dishka.integrations.faststream import setup_dishka as setup_dishka_faststre
 from fastapi import FastAPI
 from faststream import FastStream
 
-from app.api import router
+from app.api.router import router
 from app.consumers.payment_consumer import consumer_router
 from app.core.config import settings
 from app.core.dependencies import MainProvider
@@ -25,7 +25,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    fastapi_app.include_router(router, prefix="/api/v1")
+    fastapi_app.include_router(router)
 
     fastapi_app.middleware("http")(logging_middleware)
 
