@@ -1,0 +1,23 @@
+[project]
+name = "test-task-payment-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Arondondon", email = "andreypravdin52@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.20.0",
+    "asyncpg>=0.32.0",
+    "fastapi>=0.143.0",
+    "faststream>=0.7.7",
+    "pydantic>=2.14.0",
+    "sqlalchemy>=2.1.4",
+    "uvicorn>=0.54.0",
+]
+
+[project.scripts]
+test-task-payment-service = "test_task_payment_service:main"
+
+
