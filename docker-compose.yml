@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: payment_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${PAYMENT_DB_USER}
+      POSTGRES_PASSWORD: ${PAYMENT_DB_PASSWORD}
+      POSTGRES_DB: ${PAYMENT_DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PAYMENT_DB_USER} -d ${PAYMENT_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: payment_rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${PAYMENT_RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${PAYMENT_RABBIT_PASS}
+    ports:
+      - "15672:15672"
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: payment_app
+    restart: always
+    env_file:
+      - .env
+    environment:
+      PAYMENT_DB_HOST: db
+      PAYMENT_RABBIT_SERVICE_NAME: rabbitmq
+    ports:
+      - "8081:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: >
+      sh -c "uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port 8081"
+
+volumes:
+  pg_data:
+  rabbit_data:

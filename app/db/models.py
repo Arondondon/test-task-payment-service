@@ -28,6 +28,8 @@ class Payment(Base):
 
 
 class OutboxEvent(Base):
+    __tablename__ = "outbox_event"
+
     id: Mapped[UUID] = mapped_column(SA_UUID(as_uuid=True), primary_key=True, default=uuid4)
     queue_name: Mapped[str] = mapped_column(String, nullable=False)
     payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)

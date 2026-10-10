@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="payment_", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="payment_", extra="ignore", env_file = ".env")
 
     debug: bool = False
     stage: str = "dev"
@@ -32,9 +32,9 @@ class Settings(BaseSettings):
     db_max_overflow: int = 20
 
     rabbit_service_name: str = "rabbitmq"
-    rabbit_user: str
-    rabbit_pass: str
-    rabbit_port: int = 5672
+    rabbit_user: str = ""
+    rabbit_pass: str = ""
+    rabbit_port: int = 15672
 
     @property
     def amqp_url(self) -> str:
