@@ -12,7 +12,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     container = app.state.dishka_container
 
     broker = await container.get(RabbitBroker)
-    await broker.connect()
+    await broker.start()
 
     worker = OutboxWorker(container=container)
     worker.start()

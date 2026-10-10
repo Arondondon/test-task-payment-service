@@ -108,7 +108,7 @@ class PaymentService:
 
             for event in events:
                 await self._broker.publish(
-                    message=event.payload, queue=event.queue_name, headers=event.headers
+                    message=event.payload, routing_key=event.queue_name, headers=event.headers
                 )
                 event.status = OutboxEventStatus.published
 
