@@ -58,6 +58,7 @@ class PaymentService:
 
         outbox_event = OutboxEvent(
             id=uuid4(),
+            queue_name=PAYMENTS_MAIN_QUEUE,
             payload=event_payload.model_dump(mode="json"),
             headers={"x-request-id": request_id},
             status=OutboxEventStatus.pending,
@@ -92,6 +93,7 @@ class PaymentService:
             payment_id=payment.id,
             amount=payment.amount,
             currency=payment.currency,
+            status=payment.status,
             description=payment.description,
             metadata_info=payment.metadata_info,
             created_at=payment.created_at,
@@ -106,7 +108,7 @@ class PaymentService:
 
             for event in events:
                 await self._broker.publish(
-                    message=event.payload, queue=PAYMENTS_MAIN_QUEUE, headers=event.headers
+                    message=event.payload, queue=event.queue_name, headers=event.headers
                 )
                 event.status = OutboxEventStatus.published
 

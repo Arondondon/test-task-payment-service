@@ -26,6 +26,7 @@ class GetPaymentResponse(BaseModel):
     payment_id: UUID
     amount: Decimal
     currency: Currency
+    status: PaymentStatus
     description: str | None
     metadata_info: dict[str, Any] | None
     created_at: datetime
