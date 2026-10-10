@@ -1,7 +1,8 @@
-import os
 import ssl
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import Any
 
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -12,7 +13,7 @@ from sqlalchemy.ext.asyncio import (
 from app.core.config import settings
 
 
-def build_connect_args() -> dict:
+def build_connect_args() -> dict[str, Any]:
     mode = (settings.db_ssl_mode or "").lower()
 
     if mode in ("disable", "", "off", "0"):
@@ -21,7 +22,7 @@ def build_connect_args() -> dict:
     if mode in ("verify-ca", "verify-full") and not settings.db_ssl_cert:
         raise RuntimeError("DB_SSL_CERT must be provided when using verify-ca or verify-full")
 
-    if settings.db_ssl_cert and os.path.exists(settings.db_ssl_cert):
+    if settings.db_ssl_cert and Path(settings.db_ssl_cert).exists():
         ctx = ssl.create_default_context(cafile=settings.db_ssl_cert)
     else:
         ctx = ssl.create_default_context()

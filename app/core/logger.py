@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import Any
 
 import structlog
 
@@ -7,7 +8,7 @@ from app.core.config import settings
 
 
 def setup_logger(is_production: bool = True) -> None:
-    shared_processors = [
+    shared_processors: list[Any] = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_logger_name,
         structlog.stdlib.add_log_level,
@@ -16,10 +17,10 @@ def setup_logger(is_production: bool = True) -> None:
     ]
 
     if is_production:
-        processors = shared_processors + [structlog.processors.JSONRenderer()]
+        processors = [*shared_processors, structlog.processors.JSONRenderer()]
         log_format = "%(message)s"
     else:
-        processors = shared_processors + [structlog.dev.ConsoleRenderer()]
+        processors = [*shared_processors, structlog.dev.ConsoleRenderer()]
         log_format = "%(asctime)s - %(levelname)s - %(message)s"
 
     logging.basicConfig(

@@ -1,19 +1,21 @@
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from faststream.rabbit import RabbitBroker
 
-from app.infrastructure.rabbitmq.broker import broker
 from app.workers.outbox_worker import OutboxWorker
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     container = app.state.dishka_container
 
+    broker = await container.get(RabbitBroker)
     await broker.connect()
 
     worker = OutboxWorker(container=container)
-    await worker.start()
+    worker.start()
 
     try:
         yield

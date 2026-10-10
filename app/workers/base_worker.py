@@ -1,6 +1,7 @@
 import abc
 import asyncio
 from contextlib import suppress
+from typing import Any
 
 import structlog
 from dishka import AsyncContainer
@@ -18,7 +19,7 @@ class BaseWorker(abc.ABC):
         self._interval_seconds = (
             default_interval_seconds if interval_seconds is None else interval_seconds
         )
-        self._task: asyncio.Task | None = None
+        self._task: asyncio.Task[Any] | None = None
         self._stop_event = asyncio.Event()
         self._container = container
         self.worker_name = self.__class__.__name__
@@ -47,5 +48,5 @@ class BaseWorker(abc.ABC):
                 await asyncio.wait_for(self._stop_event.wait(), timeout=self._interval_seconds)
 
     @abc.abstractmethod
-    async def process_iteration(self):
+    async def process_iteration(self) -> None:
         pass

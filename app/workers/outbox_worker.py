@@ -1,5 +1,3 @@
-import asyncio
-
 from dishka import AsyncContainer
 
 from app.core.config import settings
@@ -15,10 +13,10 @@ class OutboxWorker(BaseWorker):
             container=container,
         )
 
-    async def process_iteration(self):
+    async def process_iteration(self) -> None:
+        if not self._container:
+            return
+
         async with self._container() as request_container:
             payment_service = await request_container.get(PaymentService)
-            processed_count = await payment_service.process_pending_events()
-
-        if processed_count == 0:
-            await asyncio.sleep(self._interval_seconds)
+            await payment_service.process_pending_events()

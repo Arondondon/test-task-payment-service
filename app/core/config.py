@@ -7,12 +7,13 @@ class Settings(BaseSettings):
     debug: bool = False
     stage: str = "dev"
     port: int = 8081
+    api_key: str = ""
 
     outbox_worker_interval_seconds: int = 1
 
     db_driver: str = "postgresql+asyncpg"
     db_host: str = ""
-    db_port: int = ""
+    db_port: int = 5432
     db_user: str = ""
     db_password: str = ""
     db_name: str = ""
@@ -20,7 +21,7 @@ class Settings(BaseSettings):
     @property
     def db_url(self) -> str:
         return (
-            f"{self.driver}://{self.db_user}:{self.db_password}@"
+            f"{self.db_driver}://{self.db_user}:{self.db_password}@"
             f"{self.db_host}:{self.db_port}/{self.db_name}"
         )
 
